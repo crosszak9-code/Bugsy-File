@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BUGSYS FILES</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #000;
+      color: #0f0;
+      font-family: monospace;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+    }
+    h1 {
+      font-size: 3em;
+      margin-bottom: 30px;
+      color: red; /* Title in red */
+    }
+    #countdown {
+      font-size: 2em;
+      color: lime; /* Countdown in green */
+    }
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+  </style>
+</head>
+<body>
+  <h1>BUGSYS FILES</h1>
+  <div id="countdown"></div>
+  <canvas id="bg"></canvas>
+  <script>
+    // Countdown setup: 2 calendar days from today at 00:00
+    const countdownElement = document.getElementById('countdown');
+
+    function getTargetDate() {
+      const now = new Date();
+      const target = new Date();
+      target.setDate(now.getDate() + 2); // 2 calendar days later
+      target.setHours(0, 0, 0, 0); // midnight
+      return target;
+    }
+
+    const countdownTarget = getTargetDate();
+
+    function updateCountdown() {
+      const now = new Date();
+      const diff = countdownTarget - now;
+
+      if(diff <= 0) {
+        countdownElement.textContent = "EXPIRED";
+        return;
+      }
+
+      const days = Math.floor(diff / (1000*60*60*24));
+      const hours = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+      const minutes = Math.floor((diff % (1000*60*60)) / (1000*60));
+      const seconds = Math.floor((diff % (1000*60)) / 1000);
+
+      countdownElement.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+    }
+
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+
+    // Falling dots background
+    const canvas = document.getElementById('bg');
+    const ctx = canvas.getContext('2d');
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+
+    const dots = [];
+    const dotCount = 150;
+
+    for(let i=0; i<dotCount; i++){
+      dots.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        r: Math.random() * 2 + 1,
+        d: Math.random() * 1 + 0.5
+      });
+    }
+
+    function drawDots(){
+      ctx.clearRect(0,0,width,height);
+      ctx.fillStyle = 'rgba(0,255,0,0.8)';
+      ctx.beginPath();
+      for(let i=0;i<dots.length;i++){
+        const d = dots[i];
+        ctx.moveTo(d.x,d.y);
+        ctx.arc(d.x,d.y,d.r,0,Math.PI*2,true);
+      }
+      ctx.fill();
+      updateDots();
+    }
+
+    function updateDots(){
+      for(let i=0;i<dots.length;i++){
+        const d = dots[i];
+        d.y += d.d;
+        if(d.y > height){
+          d.y = 0;
+          d.x = Math.random() * width;
+        }
+      }
+    }
+
+    function animate(){
+      drawDots();
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+
+    window.addEventListener('resize',()=>{
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
+  </script>
+</body>
+</html>
