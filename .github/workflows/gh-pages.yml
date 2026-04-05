@@ -1,23 +1,24 @@
-name: GitHub Pages Deployment
+name: Deploy Bugsy-Files to GitHub Pages
 
 on:
   push:
     branches:
-      - main  # Deploy when you push to the main branch
+      - main  # deploy whenever you push to main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
       - name: Setup Pages
         uses: actions/configure-pages@v3
 
-      - name: Upload to GitHub Pages
+      - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: ./  # Deploy everything in the root
+          path: ./   # root of your repository
 
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v1
